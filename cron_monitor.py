@@ -2,6 +2,7 @@ import time
 import json
 import urllib.request
 import sys
+import os
 from web3 import Web3
 from dex_indexer import ProductionDEXIndexer
 
@@ -9,16 +10,22 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 print('=== MIDAS AI - AUTONOMOUS SYSTEM & DEX MARKET MONITOR ===')
 
+# Load environment variables safely (supports local .env and GitHub Actions cloud env)
 env_vars = {}
-with open('c:\\projects\\Midas\\.env', 'r', encoding='utf-8') as f:
-    for line in f:
-        line = line.strip()
-        if line and not line.startswith('#') and '=' in line:
-            k, v = line.split('=', 1)
-            env_vars[k.strip()] = v.strip()
+env_file = 'c:\\projects\\Midas\\.env'
+if not os.path.exists(env_file):
+    env_file = '.env'
 
-wallet_address = os.environ.get('BASE_WALLET_ADDRESS', '0x89fEAaB88641BE2F5328959d4f9a3C549C849fA3')
-gumroad_token = os.environ.get('GUMROAD_ACCESS_TOKEN', 'OuCohW3aY1-jmrf9c3gvdDTjiS3HzU0fdy2WvGbiAnY')
+if os.path.exists(env_file):
+    with open(env_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                k, v = line.split('=', 1)
+                env_vars[k.strip()] = v.strip()
+
+wallet_address = os.environ.get('BASE_WALLET_ADDRESS') or env_vars.get('BASE_WALLET_ADDRESS') or '0x89fEAaB88641BE2F5328959d4f9a3C549C849fA3'
+gumroad_token = os.environ.get('GUMROAD_ACCESS_TOKEN') or env_vars.get('GUMROAD_ACCESS_TOKEN') or 'OuCohW3aY1-jmrf9c3gvdDTjiS3HzU0fdy2WvGbiAnY'
 
 # 1. On-Chain Base Wallet Audit
 w3 = Web3(Web3.HTTPProvider('https://mainnet.base.org'))

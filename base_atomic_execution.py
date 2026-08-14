@@ -8,6 +8,8 @@ from web3 import Web3
 sys.stdout.reconfigure(encoding='utf-8')
 
 print('=== MIDAS AI - BASE L2 ATOMIC ARBITRAGE EXECUTION ENGINE ===')
+print('🚨 SECURITY LOCKDOWN: Base L2 Arbitrage Engine is permanently disabled.')
+raise Exception('Base L2 Arbitrage Engine Disabled pending Capital Generation.')
 
 env_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(env_path)

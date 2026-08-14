@@ -5,6 +5,7 @@ import sys
 import os
 from web3 import Web3
 from dex_indexer import ProductionDEXIndexer
+from base_atomic_execution import ProductionAtomicQuantEngine
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -25,6 +26,7 @@ if os.path.exists(env_file):
                 env_vars[k.strip()] = v.strip()
 
 wallet_address = os.environ.get('BASE_WALLET_ADDRESS') or env_vars.get('BASE_WALLET_ADDRESS') or '0x89fEAaB88641BE2F5328959d4f9a3C549C849fA3'
+private_key = os.environ.get('BASE_WALLET_PRIVATE_KEY') or env_vars.get('BASE_WALLET_PRIVATE_KEY') or '0x3210e5e2ecd2a0e1594387bfdac692217cc0873c6afe1ec52cfff4efef0d8d6d'
 gumroad_token = os.environ.get('GUMROAD_ACCESS_TOKEN') or env_vars.get('GUMROAD_ACCESS_TOKEN') or 'OuCohW3aY1-jmrf9c3gvdDTjiS3HzU0fdy2WvGbiAnY'
 
 # 1. On-Chain Base Wallet Audit
@@ -39,12 +41,21 @@ print(f'   - Wallet Address: {wallet_address}')
 print(f'   - USDC Capital Balance: ${usdc_bal:,.2f} USDC')
 print(f'   - ETH Gas Balance: {float(eth_bal):.6f} ETH')
 
-# 2. Production Multi-DEX Market Scan (incorporating DeepSeek enhancements)
+# 2. Production Multi-DEX Market Scan & Quant Engine Execution
 indexer = ProductionDEXIndexer(reorg_safety_depth=12, chunk_size=25)
 dex_logs, safe_block = indexer.scan_market_events(blocks_back=150)
 print(f'2. On-Chain DEX Market Indexing:')
 print(f'   - Confirmed Safe Block: #{safe_block:,}')
 print(f'   - Captured Multi-DEX Swaps: {len(dex_logs)} events (Uniswap V2/V3 + Aerodrome + Balancer)')
+
+quant_engine = ProductionAtomicQuantEngine(wallet_address, private_key)
+quant_res = quant_engine.simulate_and_execute(
+    token_in="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    token_out="0x4200000000000000000000000000000000000006",
+    amount_in_usdc=usdc_bal,
+    min_profit_usdc=0.10
+)
+print(f'   - Atomic Quant Engine Status: {quant_res.get("status")} (Net Yield: {quant_res.get("net_yield", "$0.00")}, Gas Spent: {quant_res.get("gas_spent", "$0.00")})')
 
 # 3. Gumroad Storefront Audit across 10 products
 url = f'https://api.gumroad.com/v2/products?access_token={gumroad_token}'

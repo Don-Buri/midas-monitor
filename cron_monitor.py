@@ -28,6 +28,18 @@ if os.path.exists(env_file):
 wallet_address = os.environ.get('BASE_WALLET_ADDRESS') or env_vars.get('BASE_WALLET_ADDRESS') or '0x89fEAaB88641BE2F5328959d4f9a3C549C849fA3'
 private_key = os.environ.get('BASE_WALLET_PRIVATE_KEY') or env_vars.get('BASE_WALLET_PRIVATE_KEY') or '0x3210e5e2ecd2a0e1594387bfdac692217cc0873c6afe1ec52cfff4efef0d8d6d'
 gumroad_token = os.environ.get('GUMROAD_ACCESS_TOKEN') or env_vars.get('GUMROAD_ACCESS_TOKEN') or 'OuCohW3aY1-jmrf9c3gvdDTjiS3HzU0fdy2WvGbiAnY'
+contract_address = os.environ.get('BASE_ATOMIC_CONTRACT_ADDRESS') or env_vars.get('BASE_ATOMIC_CONTRACT_ADDRESS') or '0xFA414C7a9050Bc3036B851f0044f009e4453A0D6'
+
+# Load ABI
+contract_abi = []
+meta_path = 'c:\\projects\\Midas\\base_contract_metadata.json'
+if not os.path.exists(meta_path):
+    meta_path = 'base_contract_metadata.json'
+
+if os.path.exists(meta_path):
+    with open(meta_path, 'r', encoding='utf-8') as f:
+        m_data = json.load(f)
+        contract_abi = m_data.get('abi', [])
 
 # 1. On-Chain Base Wallet Audit
 w3 = Web3(Web3.HTTPProvider('https://mainnet.base.org'))
@@ -38,6 +50,7 @@ usdc_bal = usdc_raw / 1000000.0
 
 print('1. Base Wallet On-Chain Status:')
 print(f'   - Wallet Address: {wallet_address}')
+print(f'   - Live Deployed Contract: {contract_address}')
 print(f'   - USDC Capital Balance: ${usdc_bal:,.2f} USDC')
 print(f'   - ETH Gas Balance: {float(eth_bal):.6f} ETH')
 
@@ -48,12 +61,13 @@ print(f'2. On-Chain DEX Market Indexing:')
 print(f'   - Confirmed Safe Block: #{safe_block:,}')
 print(f'   - Captured Multi-DEX Swaps: {len(dex_logs)} events (Uniswap V2/V3 + Aerodrome + Balancer)')
 
-quant_engine = ProductionAtomicQuantEngine(wallet_address, private_key)
+quant_engine = ProductionAtomicQuantEngine(wallet_address, private_key, contract_address, contract_abi)
 quant_res = quant_engine.simulate_and_execute(
     token_in="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     token_out="0x4200000000000000000000000000000000000006",
     amount_in_usdc=usdc_bal,
-    min_profit_usdc=0.10
+    min_profit_usdc=0.10,
+    live_mode=True
 )
 print(f'   - Atomic Quant Engine Status: {quant_res.get("status")} (Net Yield: {quant_res.get("net_yield", "$0.00")}, Gas Spent: {quant_res.get("gas_spent", "$0.00")})')
 

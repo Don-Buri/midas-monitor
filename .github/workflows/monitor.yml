@@ -1,6 +1,8 @@
 name: Autonomous Midas AI 24/7 Cloud Monitor
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:

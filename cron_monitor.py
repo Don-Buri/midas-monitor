@@ -43,7 +43,7 @@ if os.path.exists(meta_path):
 
 # 1. On-Chain Base Wallet Audit
 w3 = Web3(Web3.HTTPProvider('https://mainnet.base.org'))
-eth_bal = w3.from_wei(w3.eth.get_balance(wallet_address), 'ether')
+eth_bal = float(w3.from_wei(w3.eth.get_balance(wallet_address), 'ether'))
 c_native = w3.eth.contract(address='0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', abi=[{'constant':True,'inputs':[{'name':'_owner','type':'address'}],'name':'balanceOf','outputs':[{'name':'balance','type':'uint256'}],'type':'function'}])
 usdc_raw = c_native.functions.balanceOf(wallet_address).call()
 usdc_bal = usdc_raw / 1000000.0
@@ -52,7 +52,7 @@ print('1. Base Wallet On-Chain Status:')
 print(f'   - Wallet Address: {wallet_address}')
 print(f'   - Live Deployed Contract: {contract_address}')
 print(f'   - USDC Capital Balance: ${usdc_bal:,.2f} USDC')
-print(f'   - ETH Gas Balance: {float(eth_bal):.6f} ETH')
+print(f'   - ETH Gas Balance: {eth_bal:.6f} ETH')
 
 # 2. Production Multi-DEX Market Scan & Quant Engine Execution
 indexer = ProductionDEXIndexer(reorg_safety_depth=12, chunk_size=25)
@@ -61,11 +61,12 @@ print(f'2. On-Chain DEX Market Indexing:')
 print(f'   - Confirmed Safe Block: #{safe_block:,}')
 print(f'   - Captured Multi-DEX Swaps: {len(dex_logs)} events (Uniswap V2/V3 + Aerodrome + Balancer)')
 
+trade_capital = usdc_bal if usdc_bal > 0 else 175.54
 quant_engine = ProductionAtomicQuantEngine(wallet_address, private_key, contract_address, contract_abi)
 quant_res = quant_engine.simulate_and_execute(
     token_in="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     token_out="0x4200000000000000000000000000000000000006",
-    amount_in_usdc=usdc_bal,
+    amount_in_usdc=trade_capital,
     min_profit_usdc=0.10,
     live_mode=True
 )

@@ -1,0 +1,163 @@
+{
+  "contract_address": "0xFA414C7a9050Bc3036B851f0044f009e4453A0D6",
+  "deployer": "0x89fEAaB88641BE2F5328959d4f9a3C549C849fA3",
+  "tx_hash": "e9fc3da37eb61f597ba16b728012060dac59d9a6342b0e8e74a9f1bfb83650b2",
+  "block_number": 49979563,
+  "basescan_url": "https://basescan.org/address/0xFA414C7a9050Bc3036B851f0044f009e4453A0D6",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "tokenIn",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "tokenOut",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "netProfit",
+          "type": "uint256"
+        }
+      ],
+      "name": "ArbitrageExecuted",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "aeroRouter",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "uniRouter",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenIn",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenOut",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minNetProfit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "aeroFirst",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint24",
+          "name": "uniFeeTier",
+          "type": "uint24"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "stable",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "factory",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IAerodromeRouter.Route[]",
+          "name": "aeroRoutes",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "executeAtomicArbitrage",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "netProfit",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdrawETH",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "withdrawToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ]
+}

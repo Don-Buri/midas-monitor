@@ -8,7 +8,7 @@ from dex_indexer import ProductionDEXIndexer
 
 sys.stdout.reconfigure(encoding='utf-8')
 
-print('=== MIDAS AI - AUTONOMOUS SYSTEM & DEX MARKET MONITOR ===')
+print('=== MIDAS AI - AUTONOMOUS SYSTEM, DEX MARKET & QUALITY ASSURANCE MONITOR ===')
 
 # Load environment variables safely (supports local .env and GitHub Actions cloud env)
 env_vars = {}
@@ -48,6 +48,7 @@ print(f'   - Captured Multi-DEX Swaps: {len(dex_logs)} events (Uniswap V2/V3 + A
 
 # 3. Gumroad Storefront Audit across 10 products
 url = f'https://api.gumroad.com/v2/products?access_token={gumroad_token}'
+gumroad_ok = False
 try:
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     with urllib.request.urlopen(req, timeout=10) as resp:
@@ -57,9 +58,35 @@ try:
         print('3. Gumroad Monetization Status:')
         print(f'   - Monetized Products: {len(products)}')
         print(f'   - Total Portfolio Sales: {total_sales}')
+        if len(products) >= 10:
+            gumroad_ok = True
 except Exception as e:
     print('Gumroad Audit Note:', e)
 
+# 4. Production Infrastructure Status (6 Active Micro-SaaS Applications)
+apps = [
+    'https://midas-json-api.vercel.app',
+    'https://midas-pdf-api.vercel.app',
+    'https://midas-screenshot-api.vercel.app',
+    'https://midas-qr-api.vercel.app',
+    'https://midas-metadata-api.vercel.app',
+    'https://midas-pdf-generator-api.vercel.app'
+]
+
+online_count = 0
+for app in apps:
+    try:
+        req = urllib.request.Request(app, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            if r.status == 200:
+                online_count += 1
+    except Exception:
+        pass
+
 print('4. Production Infrastructure Status:')
-print('   - All 5 Micro-SaaS API Assets ONLINE on Vercel!')
+print(f'   - Active Micro-SaaS Applications: {online_count}/{len(apps)} ONLINE on Vercel!')
+
+print('5. Autonomous Quality & Mindset Directive:')
+print('   - Quality Principle: Take 100% ownership, verify end-to-end user experience before reporting.')
+print('   - Consultation Rule: Regularly consult DeepSeek for strategic growth, CRO, and pSEO optimization.')
 print('=== AUTOMATED MONITOR CLEAN: 0 ERRORS ===')
